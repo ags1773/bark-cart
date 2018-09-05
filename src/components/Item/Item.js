@@ -6,18 +6,20 @@ class Item extends Component {
   constructor (props) {
     super()
     this.state = {
-      imgPath: props.imgPath
+      imgPath: props.imgPath,
+      qty: props.qty,
+      description: props.description
     }
   }
   render () {
     return (
       <div id='wrapper'>
-        <img src={'./' + this.state.imgPath} />
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, beatae!</p>
+        <img src={'./' + this.state.imgPath} alt='' />
+        <p>{this.state.description}</p>
         <div>
           <button>up</button>
           <button>down</button>
-
+          qty: {this.state.qty}
         </div>
       </div>
     )
@@ -25,7 +27,9 @@ class Item extends Component {
 }
 
 Item.propTypes = {
-  imgPath: PropTypes.string
+  imgPath: PropTypes.string,
+  qty: PropTypes.number,
+  description: PropTypes.string
 }
 
 export default Item
