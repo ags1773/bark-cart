@@ -4,28 +4,23 @@ import './Item.css'
 
 class Item extends Component {
   render () {
-    // return (
-    //   <div id='wrapper'>
-    //     <img src={'./' + this.props.imgPath} alt='' />
-    //     <p>{this.props.description}</p>
-    //     <div>
-    //       <button onClick={this.props.increment(this.props.id)}>up</button>
-    //       <button>down</button>
-    //       qty: {this.props.qty}
-    //     </div>
-    //   </div>
-    // )
     return (
-      <div>
-        <button onClick={this.props.sayHello}>say hello</button>
+      <div id='wrapper'>
+        <img src={this.props.image} alt='' />
+        <p>{this.props.description}</p>
+        <div>
+          <button onClick={this.props.sayHello}>up</button>
+          <button>down</button>
+          qty: {this.props.quantity}
+        </div>
       </div>
     )
   }
 }
 
 Item.propTypes = {
-  imgPath: PropTypes.string,
-  qty: PropTypes.number,
+  image: PropTypes.string,
+  quantity: PropTypes.number,
   description: PropTypes.string
 }
 

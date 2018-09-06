@@ -1,34 +1,40 @@
 import React, { Component } from 'react'
 import Item from '../Item/Item'
 import './Items.css'
+const url = 'http://localhost:4000/item'
 
 class Items extends Component {
-  // constructor () {
-  //   super()
-  //   this.state = {
-  //     data: {
-  //       '1000': {imgPath: 'dog.png', qty: 6, description: 'Lorem ipsum dolor sit amet consectetur adipisicing'},
-  //       '1001': {imgPath: 'tenor.png', qty: 3, description: 'Strong, cream barista black variety milk ristretto'},
-  //       '1002': {imgPath: 'favicon.png', qty: 4, description: 'Bacon ipsum dolor amet andouille burgdoggen'}
-  //     }
-  //   }
-  //   this.allItems = Object.keys(this.state.data).map(id => {
-  //     let dataObj = this.state.data[id]
-  //     return <Item
-  //       key={id}
-  //       id={id}
-  //       imgPath={dataObj.imgPath}
-  //       qty={dataObj.qty}
-  //       description={dataObj.description}
-  //       increment={this.increment.bind(this)}
-  //     />
-  //   })
-  // }
-
+  constructor () {
+    super()
+    this.state = {
+      fetchedItems: []
+    }
+  }
+  componentDidMount () {
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.length) {
+          this.setState({fetchedItems: data})
+        }
+      })
+      .catch(e => console.log('Error fetching items from API', e))
+  }
   onSayHello () {
     console.log('Hello')
   }
-
+  items () {
+    return this.state.fetchedItems.map((itemObj, i) => {
+      return <Item
+        key={i}
+        id={itemObj.id}
+        image={itemObj.image}
+        description={itemObj.description}
+        quantity={itemObj.quantity}
+        sayHello={this.onSayHello}
+      />
+    })
+  }
   // increment (id) { // terribly inefficient logic; will not have to do this after switching to DB
   //   let dataCopy = Object.assign({}, this.state.data)
   //   console.log('dataCopy', dataCopy[id].qty)
@@ -39,7 +45,7 @@ class Items extends Component {
   render () {
     return (
       <div>
-        <Item sayHello={this.onSayHello} />
+        {this.items()}
       </div>
     )
   }
