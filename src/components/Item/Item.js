@@ -3,24 +3,21 @@ import PropTypes from 'prop-types'
 import './Item.css'
 
 class Item extends Component {
-  constructor (props) {
-    super()
-    this.state = {
-      imgPath: props.imgPath,
-      qty: props.qty,
-      description: props.description
-    }
-  }
   render () {
+    // return (
+    //   <div id='wrapper'>
+    //     <img src={'./' + this.props.imgPath} alt='' />
+    //     <p>{this.props.description}</p>
+    //     <div>
+    //       <button onClick={this.props.increment(this.props.id)}>up</button>
+    //       <button>down</button>
+    //       qty: {this.props.qty}
+    //     </div>
+    //   </div>
+    // )
     return (
-      <div id='wrapper'>
-        <img src={'./' + this.state.imgPath} alt='' />
-        <p>{this.state.description}</p>
-        <div>
-          <button>up</button>
-          <button>down</button>
-          qty: {this.state.qty}
-        </div>
+      <div>
+        <button onClick={this.props.sayHello}>say hello</button>
       </div>
     )
   }
