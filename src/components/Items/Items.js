@@ -14,14 +14,19 @@ class Items extends Component {
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        if (data.length) {
-          this.setState({fetchedItems: data})
-        }
+        if (data.length) this.setState({fetchedItems: data})
       })
       .catch(e => console.log('Error fetching items from API', e))
   }
-  onSayHello () {
-    console.log('Hello')
+  onIncrement (i) {
+    const temp = JSON.parse(JSON.stringify(this.state.fetchedItems))
+    temp[i].quantity++
+    this.setState({fetchedItems: temp})
+  }
+  onDecrement (i) {
+    const temp = JSON.parse(JSON.stringify(this.state.fetchedItems))
+    temp[i].quantity--
+    this.setState({fetchedItems: temp})
   }
   items () {
     return this.state.fetchedItems.map((itemObj, i) => {
@@ -31,16 +36,11 @@ class Items extends Component {
         image={itemObj.image}
         description={itemObj.description}
         quantity={itemObj.quantity}
-        sayHello={this.onSayHello}
+        countUp={this.onIncrement.bind(this, i)} // bind is needed because onIncrement() is run later (after clicking button). At the time of running, 'this' will be undefined inside the function
+        countDown={this.onDecrement.bind(this, i)}
       />
     })
   }
-  // increment (id) { // terribly inefficient logic; will not have to do this after switching to DB
-  //   let dataCopy = Object.assign({}, this.state.data)
-  //   console.log('dataCopy', dataCopy[id].qty)
-  //   dataCopy[id].qty++
-  //   this.setState({data: dataCopy})
-  // }
 
   render () {
     return (

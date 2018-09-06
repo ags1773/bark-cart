@@ -9,8 +9,8 @@ class Item extends Component {
         <img src={this.props.image} alt='' />
         <p>{this.props.description}</p>
         <div>
-          <button onClick={this.props.sayHello}>up</button>
-          <button>down</button>
+          <button onClick={this.props.countUp}>up</button>
+          <button onClick={this.props.countDown}>down</button>
           qty: {this.props.quantity}
         </div>
       </div>
