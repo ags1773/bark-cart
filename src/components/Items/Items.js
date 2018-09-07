@@ -7,16 +7,24 @@ class Items extends Component {
   constructor () {
     super()
     this.state = {
-      fetchedItems: []
+      fetchedItems: [],
+      error: {
+        status: false,
+        message: ''
+      }
     }
   }
   componentDidMount () {
     fetch(url)
       .then(res => res.json())
       .then(data => {
+        this.setErrorState(false, '')
         if (data.length) this.setState({fetchedItems: data})
       })
-      .catch(e => console.log('Error fetching items from API', e))
+      .catch(e => {
+        this.setErrorState(true, e.message)
+        console.log(e)
+      })
   }
   onIncrement (i) {
     const temp = JSON.parse(JSON.stringify(this.state.fetchedItems))
@@ -41,13 +49,30 @@ class Items extends Component {
       />
     })
   }
+  setErrorState (status, message) {
+    this.setState({
+      error: {
+        status: status,
+        message: message
+      }
+    })
+  }
 
   render () {
-    return (
-      <div>
-        {this.items()}
-      </div>
-    )
+    if (this.state.error.status) {
+      return (
+        <div>
+          <h3>Error Occured</h3>
+          <p>{this.state.error.message}</p>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          {this.items()}
+        </div>
+      )
+    }
   }
 }
 
