@@ -44,7 +44,7 @@ class Items extends Component {
         image={itemObj.image}
         description={itemObj.description}
         quantity={itemObj.quantity}
-        countUp={this.onIncrement.bind(this, i)} // bind is needed because onIncrement() is run later (after clicking button). At the time of running, 'this' will be undefined inside the function
+        countUp={this.onIncrement.bind(this, i)}
         countDown={this.onDecrement.bind(this, i)}
       />
     })
