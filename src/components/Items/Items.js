@@ -14,18 +14,18 @@ class Items extends Component {
       }
     }
   }
-  componentDidMount () {
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        this.setErrorState(false, '')
-        if (data.length) this.setState({fetchedItems: data})
-      })
-      .catch(e => {
-        this.setErrorState(true, e.message)
-        console.log(e)
-      })
-  }
+  // componentDidMount () { // fetch moved to parent component
+  //   fetch(url)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       this.setErrorState(false, '')
+  //       if (data.length) this.setState({fetchedItems: data})
+  //     })
+  //     .catch(e => {
+  //       this.setErrorState(true, e.message)
+  //       console.log(e)
+  //     })
+  // }
   onIncrement (i) {
     const temp = JSON.parse(JSON.stringify(this.state.fetchedItems))
     temp[i].quantity++
