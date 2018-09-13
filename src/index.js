@@ -19,12 +19,12 @@ class App extends Component {
   constructor () {
     super()
     this.state = {
-      test: 'TEST123',
       fetchedItems: [],
       error: {
         status: false,
         message: ''
-      }
+      },
+      boughtItems: [] // array of objects {id:'abc123', qty:3}
     }
   }
   componentWillMount () {
@@ -44,18 +44,30 @@ class App extends Component {
       }
     })
   }
-  changeItemQty (id, flag) {
-    const tempCopy = this.state.fetchedItems.slice()
-    for (let item of tempCopy) {
-      if (item._id === id) {
-        if (flag) item.quantity++
-        else {
-          if (item.quantity > 0) item.quantity--
-        }
+  addOrRemoveItem (id, flag) { // flag true => item removed; false => item bought
+    const fetchedItemsCopy = this.state.fetchedItems.slice()
+    const boughtItemsCopy = this.state.boughtItems.slice()
+    let item = findMatch(id, fetchedItemsCopy)
+    let boughtItem = findMatch(id, boughtItemsCopy)
+    if (!boughtItem) boughtItem = new BoughtItem(id)
+
+    if (!flag) {
+      if (item.quantity > 0) {
+        item.quantity--
+        boughtItem.quantity++
       }
-      break
+    } else {
+      if (boughtItem.quantity > 0) {
+        item.quantity++
+        boughtItem.quantity--
+      }
     }
-    this.setState({fetchedItems: tempCopy})
+    mergeArrayItem(item, fetchedItemsCopy)
+    mergeArrayItem(boughtItem, boughtItemsCopy)
+    this.setState({fetchedItems: fetchedItemsCopy})
+    this.setState({boughtItems: boughtItemsCopy})
+    console.log('fetchedItems >>', this.state.fetchedItems)
+    console.log('BoughtItems >>', this.state.boughtItems)
   }
 
   render () {
@@ -73,7 +85,7 @@ class App extends Component {
                 exact path='/'
                 render={() => <Items
                   fetchedItems={this.state.fetchedItems}
-                  changeItemQty={this.changeItemQty.bind(this)}
+                  addOrRemoveItem={this.addOrRemoveItem.bind(this)}
                 />}
               />
               <Route
@@ -89,3 +101,32 @@ class App extends Component {
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))
+
+function findMatch (id, items) {
+  for (let item of items) {
+    if (item._id === id) {
+      return item
+    }
+  }
+  return false
+}
+function mergeArrayItem (item, arr) {
+  let found = false
+  for (let arrItem of arr) {
+    if (arrItem._id === item._id) {
+      found = true
+      Object.keys(item).forEach(key => {
+        if (arrItem.hasOwnProperty(key)) arrItem[key] = item[key]
+      })
+      break
+    }
+  }
+  if (!found) arr.push(item)
+}
+
+class BoughtItem {
+  constructor (id) {
+    this._id = id
+    this.quantity = 0
+  }
+}

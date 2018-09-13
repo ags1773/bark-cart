@@ -11,7 +11,7 @@ function Items (props) {
         image={itemObj.image}
         description={itemObj.description}
         quantity={itemObj.quantity}
-        changeItemQty={props.changeItemQty}
+        addOrRemoveItem={props.addOrRemoveItem}
       />
     })
   }
