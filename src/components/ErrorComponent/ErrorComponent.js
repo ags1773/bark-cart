@@ -1,9 +1,12 @@
 import React from 'react'
 import './ErrorComponent.css'
 
-function ErrorComponent () {
+function ErrorComponent (props) {
   return (
-    <h2>Error Component</h2>
+    <div className='ErrorComponent'>
+      <h2>Error Occured. Please reload or try again later</h2>
+      <p>Description: {props.message}</p>
+    </div>
   )
 }
 

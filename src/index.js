@@ -20,35 +20,61 @@ class App extends Component {
     super()
     this.state = {
       test: 'TEST123',
-      error: false
+      fetchedItems: [],
+      error: {
+        status: false,
+        message: ''
+      }
     }
   }
   componentWillMount () {
     fetch(getItemsURL)
       .then(res => res.json())
       .then(data => {
-        console.log('DATA >>> ', data)
+        this.setErrorState(false, '')
+        if (data.length) this.setState({fetchedItems: data})
       })
-      .catch(e => {
-        console.log(e)
-        this.setState({error: true})
-      })
+      .catch(e => this.setErrorState(true, e.message))
+  }
+  setErrorState (status, message) {
+    this.setState({
+      error: {
+        status: status,
+        message: message
+      }
+    })
+  }
+  changeItemQty (id, flag) {
+    const tempCopy = this.state.fetchedItems.slice()
+    for (let item of tempCopy) {
+      if (item._id === id) {
+        if (flag) item.quantity++
+        else {
+          if (item.quantity > 0) item.quantity--
+        }
+      }
+      break
+    }
+    this.setState({fetchedItems: tempCopy})
   }
 
   render () {
     return (
       <Router>
         {
-          this.state.error
+          this.state.error.status
             ? <div>
               <Nav />
-              <ErrorComponent />
+              <ErrorComponent message={this.state.error.message} />
             </div>
             : <div>
               <Nav />
               <Route
                 exact path='/'
-                render={() => <Items testProp={this.state.test} />}
+                render={() => <Items
+                  fetchedItems={this.state.fetchedItems}
+                  changeItemQty={this.changeItemQty.bind(this)}
+                />}
               />
               <Route
                 path='/cart'

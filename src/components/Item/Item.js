@@ -1,27 +1,18 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 import './Item.css'
 
-class Item extends Component {
-  render () {
-    return (
-      <div id='wrapper'>
-        <img src={this.props.image} alt='' />
-        <p>{this.props.description}</p>
-        <div>
-          <button onClick={this.props.countUp}>up</button>
-          <button onClick={this.props.countDown}>down</button>
-          qty: {this.props.quantity}
-        </div>
+function Item (props) {
+  return (
+    <div id='wrapper'>
+      <img src={props.image} alt='' />
+      <p>{props.description}</p>
+      <div>
+        <button onClick={props.changeItemQty.bind(this, props.id, true)}>up</button>
+        <button onClick={props.changeItemQty.bind(this, props.id, false)}>down</button>
+        qty: {props.quantity}
       </div>
-    )
-  }
-}
-
-Item.propTypes = {
-  image: PropTypes.string,
-  quantity: PropTypes.number,
-  description: PropTypes.string
+    </div>
+  )
 }
 
 export default Item
