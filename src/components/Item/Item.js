@@ -7,10 +7,15 @@ function Item (props) {
       <img src={props.image} alt='' />
       <p>{props.description}</p>
       <div>
-        <button onClick={props.addOrRemoveItem.bind(this, props.id, true)}>Remove</button>
-        <button onClick={props.addOrRemoveItem.bind(this, props.id, false)}>Add</button>
-        Items remaining: {props.quantity}
+        <button onClick={props.addOrRemoveItem.bind(this, props.id, false)}>Remove</button>
+        <button onClick={props.addOrRemoveItem.bind(this, props.id, true)}>Add</button>
+        <p>
+          Items remaining: {props.quantity}
+          <br />
+          Bought Qty: {props.boughtQty}
+        </p>
       </div>
+      <hr />
     </div>
   )
 }

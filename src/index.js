@@ -24,7 +24,7 @@ class App extends Component {
         status: false,
         message: ''
       },
-      boughtItems: [] // array of objects {id:'abc123', qty:3}
+      boughtItems: []
     }
   }
   componentWillMount () {
@@ -44,32 +44,56 @@ class App extends Component {
       }
     })
   }
-  addOrRemoveItem (id, flag) { // flag true => item removed; false => item bought
+  addOrRemoveItem (id, flag) { // flag true => item bought; false => item removed
     const fetchedItemsCopy = this.state.fetchedItems.slice()
     const boughtItemsCopy = this.state.boughtItems.slice()
     let item = findMatch(id, fetchedItemsCopy)
     let boughtItem = findMatch(id, boughtItemsCopy)
-    if (!boughtItem) boughtItem = new BoughtItem(id)
+    if (!boughtItem) boughtItem = new BoughtItem(item)
 
-    if (!flag) {
+    if (flag) {
       if (item.quantity > 0) {
         item.quantity--
-        boughtItem.quantity++
+        boughtItem.quantityBought++
       }
     } else {
-      if (boughtItem.quantity > 0) {
+      if (boughtItem.quantityBought > 0) {
         item.quantity++
-        boughtItem.quantity--
+        boughtItem.quantityBought--
       }
     }
-    mergeArrayItem(item, fetchedItemsCopy)
-    mergeArrayItem(boughtItem, boughtItemsCopy)
-    this.setState({fetchedItems: fetchedItemsCopy})
-    this.setState({boughtItems: boughtItemsCopy})
-    console.log('fetchedItems >>', this.state.fetchedItems)
-    console.log('BoughtItems >>', this.state.boughtItems)
-  }
 
+    mergeArrayItem(item, fetchedItemsCopy)
+    if (boughtItem.quantityBought > 0) {
+      mergeArrayItem(boughtItem, boughtItemsCopy)
+    }
+    if (boughtItem.quantityBought === 0) {
+      findAndRemove(boughtItem._id, boughtItemsCopy)
+    }
+    this.setState({boughtItems: boughtItemsCopy})
+    this.setState({fetchedItems: fetchedItemsCopy})
+  }
+  buyItems () {
+    this.state.boughtItems.forEach(item => {
+      fetch(`${getItemsURL}/${item._id}`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify(findMatch(item._id, this.state.fetchedItems))
+      })
+        .then(res => res.json())
+        .then(() => {
+          console.log('Items purchased successfully')
+          this.setState({message: 'Items purchased successfully'})
+          this.setState({
+            boughtItems: []
+          })
+        })
+        .catch(e => console.log('Update Failed >>', e))
+    })
+  }
   render () {
     return (
       <Router>
@@ -85,12 +109,17 @@ class App extends Component {
                 exact path='/'
                 render={() => <Items
                   fetchedItems={this.state.fetchedItems}
+                  boughtItems={this.state.boughtItems}
                   addOrRemoveItem={this.addOrRemoveItem.bind(this)}
                 />}
               />
               <Route
                 path='/cart'
-                render={() => <Cart testProp={this.state.test} />}
+                render={() => <Cart
+                  boughtItems={this.state.boughtItems}
+                  fetchedItems={this.state.fetchedItems}
+                  buyItems={this.buyItems.bind(this)}
+                />}
               />
               <Route path='/admin' component={Admin} />
             </div>
@@ -110,7 +139,7 @@ function findMatch (id, items) {
   }
   return false
 }
-function mergeArrayItem (item, arr) {
+function mergeArrayItem (item, arr) { // merges 'item' into arr
   let found = false
   for (let arrItem of arr) {
     if (arrItem._id === item._id) {
@@ -123,10 +152,16 @@ function mergeArrayItem (item, arr) {
   }
   if (!found) arr.push(item)
 }
+function findAndRemove (id, arr) {
+  let idx = arr.indexOf(findMatch(id, arr))
+  if (idx > -1) arr.splice(idx, 1)
+}
 
 class BoughtItem {
-  constructor (id) {
-    this._id = id
-    this.quantity = 0
+  constructor (item) {
+    this._id = item._id
+    this.image = item.image
+    this.description = item.description
+    this.quantityBought = 0
   }
 }
