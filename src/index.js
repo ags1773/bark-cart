@@ -70,29 +70,38 @@ class App extends Component {
     if (boughtItem.quantityBought === 0) {
       findAndRemove(boughtItem._id, boughtItemsCopy)
     }
-    this.setState({boughtItems: boughtItemsCopy})
-    this.setState({fetchedItems: fetchedItemsCopy})
+    this.setState({
+      fetchedItems: fetchedItemsCopy,
+      boughtItems: boughtItemsCopy
+    })
   }
   buyItems () {
-    this.state.boughtItems.forEach(item => {
-      fetch(`${getItemsURL}/${item._id}`, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        },
-        body: JSON.stringify(findMatch(item._id, this.state.fetchedItems))
-      })
-        .then(res => res.json())
-        .then(() => {
-          console.log('Items purchased successfully')
-          this.setState({message: 'Items purchased successfully'})
-          this.setState({
-            boughtItems: []
-          })
+    let boughtItemsCopy = this.state.boughtItems.slice()
+    let promises = boughtItemsCopy.map(item => {
+      return new Promise((resolve, reject) => {
+        fetch(`${getItemsURL}/${item._id}`, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body: JSON.stringify(findMatch(item._id, this.state.fetchedItems))
         })
-        .catch(e => console.log('Update Failed >>', e))
+          .then(res => res.json())
+          .then(() => resolve(`Successfully bought ${item.quantityBought} unit(s) of item ${item._id}`))
+          .catch(e => reject(e))
+      })
     })
+    Promise.all(promises)
+      .then(msg => {
+        console.log(msg)
+        this.setState({
+          message: msg,
+          fetchedItems: this.state.fetchedItems,
+          boughtItems: []
+        })
+      })
+      .catch(e => console.log(`Couldn't resolve all promises`, e))
   }
   render () {
     return (
@@ -118,7 +127,7 @@ class App extends Component {
                 render={() => <Cart
                   boughtItems={this.state.boughtItems}
                   fetchedItems={this.state.fetchedItems}
-                  buyItems={this.buyItems.bind(this)}
+                  buyItems={this.buyItems}
                 />}
               />
               <Route path='/admin' component={Admin} />
@@ -162,6 +171,7 @@ class BoughtItem {
     this._id = item._id
     this.image = item.image
     this.description = item.description
+    this.unitPrice = item.unitPrice
     this.quantityBought = 0
   }
 }

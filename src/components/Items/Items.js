@@ -13,6 +13,7 @@ function Items (props) {
         image={itemObj.image}
         description={itemObj.description}
         quantity={itemObj.quantity}
+        unitPrice={itemObj.unitPrice}
         boughtQty={itemsBought ? itemsBought.quantityBought : 0}
         addOrRemoveItem={props.addOrRemoveItem}
       />

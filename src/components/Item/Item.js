@@ -5,6 +5,7 @@ function Item (props) {
   return (
     <div id='wrapper'>
       <img src={props.image} alt='' />
+      <p>Unit price : {props.unitPrice}</p>
       <p>{props.description}</p>
       <div>
         <button onClick={props.addOrRemoveItem.bind(this, props.id, false)}>Remove</button>

@@ -8,6 +8,7 @@ class Admin extends Component {
     this.image = ''
     this.description = ''
     this.quantity = 0
+    this.unitPrice = 0
   }
   sendData (data) {
     fetch(url, {
@@ -33,13 +34,17 @@ class Admin extends Component {
   handleChangeQty (e) {
     this.setState({quantity: e.target.value})
   }
+  handleChangePrice (e) {
+    this.setState({unitPrice: e.target.value})
+  }
   handleBtnClick (e) {
     e.preventDefault()
     if (this.state && this.state.image.trim() && this.state.description.trim() && this.state.quantity > 0) {
       this.sendData({
         image: this.state.image,
         description: this.state.description,
-        quantity: this.state.quantity
+        quantity: this.state.quantity,
+        unitPrice: this.state.unitPrice
       })
     }
   }
@@ -63,6 +68,12 @@ class Admin extends Component {
           <label className='label'>Quantity</label>
           <div className='control'>
             <input className='input' type='number' min='0' onChange={this.handleChangeQty.bind(this)} />
+          </div>
+        </div>
+        <div className='field'>
+          <label className='label'>Unit Price</label>
+          <div className='control'>
+            <input className='input' type='number' min='0' onChange={this.handleChangePrice.bind(this)} />
           </div>
         </div>
         <div className='field'>
